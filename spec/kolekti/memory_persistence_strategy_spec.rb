@@ -18,10 +18,28 @@ describe Kolekti::MemoryPersistenceStrategy do
       }
     }
 
-    it 'is expected to store the result in memory' do
-      subject.create_tree_metric_result(metric_configuration, module_name, value, granularity)
+    context 'with valid metric configuration' do
+      it 'is expected to store the result in memory' do
+        subject.create_tree_metric_result(metric_configuration, module_name, value, granularity)
+        expect(subject.tree_metric_results).to eq([result_hash])
+      end
+    end
 
-      expect(subject.tree_metric_results).to eq([result_hash])
+    context 'with duplicated module name and configuration' do
+      it 'is expected to throw an error' do
+        subject.create_tree_metric_result(metric_configuration, module_name, value, granularity)
+        expect{
+          subject.create_tree_metric_result(metric_configuration, module_name, value, granularity)
+        }.to raise_error(Kolekti::AlreadyTakenModuleException)
+      end
+    end
+
+    context 'with duplicated module name xor configuration' do
+      it 'is expected to increase total number of tree_metric_results' do
+        subject.create_tree_metric_result(metric_configuration, module_name, value, granularity)
+        subject.create_tree_metric_result(metric_configuration, 'myawezomemodule', value, granularity)
+        expect(subject.tree_metric_results.count).to eq(2)
+      end
     end
   end
 

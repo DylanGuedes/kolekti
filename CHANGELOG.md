@@ -4,6 +4,8 @@ The Kolekti gem provides a basic API for KalibroProcessor's collectors
 
 ## Unreleased
 
+* Handle 'tree_metric_result' with same modules or configs
+
 ## v1.1.3 - 15/04/2016
 
 * Update Collector#collect_metrics signature
